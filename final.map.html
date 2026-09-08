@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>@construct-space/sdk — surface map</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root {
+      --bg: #0c0d10; --panel: #14161b; --panel-2: #1a1d23; --border: #2a2e36; --border-2: #3a3f49;
+      --text: #e6e8ec; --muted: #8b919d; --muted-2: #6a6f78;
+      --accent: #7ab7ff; --accent-2: #c39bff; --accent-3: #8fe1b3;
+      --code: #eef0f4;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font: 14px/1.55 -apple-system, "SF Pro Text", system-ui, sans-serif; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: var(--mono); background: var(--panel-2); padding: 1px 5px; border-radius: 3px; font-size: 0.92em; }
+    header { padding: 32px 40px 24px; border-bottom: 1px solid var(--border); }
+    header h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+    header h1 .pkg { color: var(--accent); font-family: var(--mono); }
+    header h1 .ver { color: var(--accent-2); font-family: var(--mono); font-size: 13px; margin-left: 8px; }
+    header .sub { margin-top: 6px; color: var(--muted); font-size: 13px; max-width: 820px; }
+    header .meta { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 18px; font-size: 12px; color: var(--muted); font-family: var(--mono); }
+    header .meta b { color: var(--text); font-weight: 600; }
+    .banner { margin: 16px 40px 0; padding: 12px 16px; background: rgba(143, 225, 179, 0.05); border: 1px solid rgba(143, 225, 179, 0.25); border-radius: 6px; font-size: 12.5px; color: var(--text); }
+    .banner b { color: var(--accent-3); }
+    nav.toc { padding: 14px 40px; border-bottom: 1px solid var(--border); background: var(--panel); font-size: 12.5px; font-family: var(--mono); margin-top: 16px; }
+    nav.toc a { color: var(--muted); margin-right: 18px; }
+    nav.toc a:hover { color: var(--text); }
+    nav.toc a b { color: var(--accent-2); font-weight: 500; margin-left: 4px; }
+    main { padding: 16px 40px 60px; max-width: 1400px; }
+    section.top { margin-top: 40px; scroll-margin-top: 20px; }
+    section.top > h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; margin: 0 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    section.top > h2 .count { color: var(--accent-2); font-weight: 500; font-family: var(--mono); margin-left: 6px; text-transform: none; letter-spacing: 0; }
+    section.top > h2 .src { float: right; font-family: var(--mono); font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--muted); }
+    .subgroup { margin: 22px 0 4px; }
+    .subgroup h3 { margin: 0 0 10px; font-size: 12px; font-family: var(--mono); color: var(--accent-3); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: flex; align-items: baseline; gap: 10px; }
+    .subgroup h3::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+    .subgroup h3 .n { color: var(--muted-2); font-weight: 400; font-size: 11px; }
+    .subgroup .hint { color: var(--muted); font-size: 12px; margin: -6px 0 10px; max-width: 800px; }
+    .grid { display: grid; gap: 7px 12px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); font-family: var(--mono); font-size: 12.5px; }
+    .grid .item { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; color: var(--code); }
+    .grid .item:hover { background: var(--panel-2); border-color: var(--border-2); }
+    .grid .item .note { display: block; color: var(--muted); font-family: -apple-system, system-ui, sans-serif; font-size: 11px; margin-top: 2px; }
+    .types-table { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px 10px; font-family: var(--mono); font-size: 12px; }
+    .types-table .t { display: flex; justify-content: space-between; padding: 6px 10px; background: var(--panel); border: 1px solid var(--border); border-radius: 5px; }
+    .types-table .t .n { color: var(--code); }
+    .types-table .t .c { color: var(--accent-2); }
+    .stack { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+    .stack .pkg-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+    .stack .pkg-card h3 { margin: 0 0 6px; font-family: var(--mono); font-size: 13px; color: var(--accent); }
+    .stack .pkg-card p { margin: 0 0 8px; color: var(--muted); font-size: 12.5px; }
+    .stack .pkg-card .exports { font-family: var(--mono); font-size: 11.5px; color: var(--code); line-height: 1.7; }
+    .stack .pkg-card .exports span { display: inline-block; background: var(--panel-2); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; margin: 0 4px 4px 0; }
+    footer { margin-top: 60px; padding: 20px 40px; color: var(--muted); font-size: 11px; border-top: 1px solid var(--border); font-family: var(--mono); }
+    footer .right { float: right; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><span class="pkg">@construct-space/sdk</span> — Surface Map <span class="ver">v0.11.x (working toward v1.0)</span></h1>
+  <p class="sub">TypeScript types + reactive composables + Zod schemas for building external Construct Spaces. Pure declarations — the host injects runtimes via <code>window.__CONSTRUCT__['@construct-space/sdk']</code>. UI primitives live in <code>@construct-space/ui</code>; this package does not re-declare them.</p>
+  <p class="meta">
+    <span>entry <b>src/index.ts</b></span>
+    <span>composables <b>17</b> (7 groups)</span>
+    <span>stores <b>4</b></span>
+    <span>type files <b>9</b></span>
+    
+  </p>
+</header>
+
+<div class="banner">
+  <b>Surface boundary.</b> External Spaces consume this SDK only. Internal built-in Spaces (frontend/spaces/*) reach into host private APIs directly. Agent RPC, model selection, assistant chat, host chrome (toasts, panels, OS/runtime info, i18n, theme), and design-canvas surfaces are deliberately not here — Spaces declare actions in <code>actions.ts</code> and the agent calls them. One-way.
+</div>
+
+<nav class="toc">
+  <a href="#composables">Composables<b>17</b></a>
+  <a href="#stores">Stores<b>4</b></a>
+  
+  <a href="#types">Types<b>9</b></a>
+</nav>
+
+<main>
+
+<section class="top" id="composables">
+  <h2>
+    Composables<span class="count">17</span>
+    <span class="src">src/composables.ts</span>
+  </h2>
+  <p style="color: var(--muted); margin: -8px 0 4px; font-size: 12.5px; max-width: 800px;">Vue composables exposed by the host runtime. All declared as <code>declare function</code> — types only; bodies come from <code>window.__CONSTRUCT__</code>. Grouped by domain; rough order of how often a Space needs each.</p>
+
+  <div class="subgroup">
+    <h3>Auth &amp; Identity <span class="n">3</span></h3>
+    <p class="hint">Who's signed in, what they're allowed to do, and per-resource sharing.</p>
+    <div class="grid">
+      <div class="item">useAuth()<span class="note">Auth store proxy (user, token)</span></div>
+      <div class="item">useAuthorization()<span class="note">RBAC — can(action, resource) + canEdit/canCreate/... sugar + roles</span></div>
+      <div class="item">useAccess&lt;T&gt;()<span class="note">ABAC — per-resource sharing</span></div>
+    </div>
+  </div>
+
+  <div class="subgroup">
+    <h3>Organization <span class="n">5</span></h3>
+    <p class="hint">Tenant directory — members, structure, roles. Backs the share-picker flow.</p>
+    <div class="grid">
+      <div class="item">useOrg()<span class="note">Active organization</span></div>
+      <div class="item">useOrgMembers()<span class="note">Member roster — share picker source</span></div>
+      <div class="item">useOrgTeams()<span class="note">Team listing</span></div>
+      <div class="item">useOrgDepartments()<span class="note">Department listing</span></div>
+      <div class="item">useOrgRoles()<span class="note">Role definitions</span></div>
+    </div>
+  </div>
+
+  <div class="subgroup">
+    <h3>Toolbar &amp; Breadcrumb <span class="n">2</span></h3>
+    <p class="hint">Host-toolbar contributions only. Panels, splitters, popovers, dropdowns — all UI composition; use <code>@construct-space/ui</code> components (<code>&lt;SplitPane&gt;</code>, <code>&lt;DashboardPanel&gt;</code>, <code>&lt;Dropdown&gt;</code>, <code>&lt;Popover&gt;</code>). Theme is plain CSS variables — no composable.</p>
+    <div class="grid">
+      <div class="item">useToolbar()<span class="note">Toolbar action items + search</span></div>
+      <div class="item">useBreadcrumb()<span class="note">Declare the trail; host renders it in the toolbar slot</span></div>
+    </div>
+  </div>
+
+  <div class="subgroup">
+    <h3>Routing &amp; Shortcuts <span class="n">2</span></h3>
+    <p class="hint">In-Space router (thin shell over vue-router) + per-Space keybinds.</p>
+    <div class="grid">
+      <div class="item">useNavigator()<span class="note">GetX-style: to/off/offAll/back/until — awaitable (pickers)</span></div>
+      <div class="item">useSpaceShortcuts(list)<span class="note">Per-space keybinds</span></div>
+    </div>
+  </div>
+
+  <div class="subgroup">
+    <h3>Networking &amp; Data <span class="n">3</span></h3>
+    <p class="hint">HTTP client, file storage, per-space KV. For typed models use <code>@construct-space/graph</code>. Do not bring axios/ky/dio — useHttp is the client.</p>
+    <div class="grid">
+      <div class="item">useHttp()<span class="note">Full HTTP client (get/post/put/patch/delete, JSON, retry, interceptors, .create() scoped)</span></div>
+      <div class="item">useStorage()<span class="note">File storage — root is {space_id}/&lt;path&gt;</span></div>
+      <div class="item">useLocalStorage()<span class="note">Per-space KV (IndexedDB, persistent)</span></div>
+    </div>
+  </div>
+
+  <div class="subgroup">
+    <h3>Messaging <span class="n">2</span></h3>
+    <p class="hint">Spaces fire notifications + send email. Host owns the bell, inbox, push enrollment, mark-read, prefs. <code>&lt;Toast&gt;</code> + <code>useToast()</code> live in <code>@construct-space/ui</code> for "file saved" style transients.</p>
+    <div class="grid">
+      <div class="item">useNotification()<span class="note">send(input) — fire one notification. Host owns bell/inbox/push.</span></div>
+      <div class="item">useDelivery()<span class="note">Outbound email (Construct-branded; layout fixed)</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="top" id="utils">
+  <h2>
+    Utilities<span class="count">5+</span>
+    <span class="src">src/utils.ts</span>
+  </h2>
+  <p style="color: var(--muted); margin: -8px 0 12px; font-size: 12.5px;">Non-domain helpers — markdown, dates, fonts, CSV, downloads, env. Runtime detection and i18n were cut: spaces should be host-agnostic and ship their own translations.</p>
+  <div class="grid">
+    <div class="item">useGoogleFonts()<span class="note">Font catalog — Pages/Design need it</span></div>
+    <div class="item">useMarkdown()<span class="note">MD → safe HTML (host-shared, sanitized, highlighted)</span></div>
+    <div class="item">useDateFormat()<span class="note">Locale date strings</span></div>
+    <div class="item">useDownload()<span class="note">Save blob/URL to disk (Tauri save dialog / web anchor)</span></div>
+    <div class="item">useExport()<span class="note">Serialize rows → csv/tsv/json/xlsx/markdown; .save() chains useDownload</span></div>
+    <div class="item">useImport()<span class="note">Parse File/Blob/string → rows; format auto-detected</span></div>
+    <div class="item">renderMarkdown(md)<span class="note">One-shot MD render</span></div>
+    <div class="item">randomFrom, randomInt<span class="note">Misc</span></div>
+    <div class="item">appConfig, db, deleteDatabase<span class="note">Env + IDB handle</span></div>
+  </div>
+</section>
+
+<section class="top" id="stores">
+  <h2>
+    Pinia Stores<span class="count">4</span>
+    <span class="src">src/stores.ts</span>
+  </h2>
+  <p style="color: var(--muted); margin: -8px 0 12px; font-size: 12.5px;">Composables proxy these. Read state from stores directly — never infer from API errors.</p>
+  <div class="grid">
+    <div class="item">useAuthStore()<span class="note">User, token, login flow</span></div>
+    <div class="item">usePinnedStore()<span class="note">Pinned items per surface</span></div>
+    <div class="item">usePreferencesStore()<span class="note">User prefs (theme, locale)</span></div>
+    <div class="item">useSettingsStore()<span class="note">Editor / app settings</span></div>
+  </div>
+</section>
+
+<section class="top" id="types">
+  <h2>
+    Type Files<span class="count">13</span>
+    <span class="src">src/types/*.ts</span>
+  </h2>
+  <p style="color: var(--muted); margin: -8px 0 12px; font-size: 12.5px;">Pure type declarations for SDK-wide contracts.</p>
+  <div class="types-table">
+    <div class="t"><span class="n">api</span><span class="c">12</span></div>
+    <div class="t"><span class="n">panels</span><span class="c">11</span></div>
+    <div class="t"><span class="n">auth</span><span class="c">10</span></div>
+    <div class="t"><span class="n">notification</span><span class="c">9</span></div>
+    <div class="t"><span class="n">manifest</span><span class="c">8</span></div>
+    <div class="t"><span class="n">authorization</span><span class="c">7</span></div>
+    <div class="t"><span class="n">org</span><span class="c">6</span></div>
+    <div class="t"><span class="n">preference</span><span class="c">6</span></div>
+    <div class="t"><span class="n">user</span><span class="c">5</span></div>
+    <div class="t"><span class="n">common</span><span class="c">4</span></div>
+    <div class="t"><span class="n">project</span><span class="c">4</span></div>
+    <div class="t"><span class="n">setting</span><span class="c">2</span></div>
+    <div class="t"><span class="n">translation</span><span class="c">2</span></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Generated from src/ — open as a static file, no build.
+  <span class="right">@construct-space/sdk v0.11.x → v1.0</span>
+</footer>
+
+</body>
+</html>

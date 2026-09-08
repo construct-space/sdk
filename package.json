@@ -1,0 +1,66 @@
+{
+  "name": "@construct-space/sdk",
+  "version": "2.2.0",
+  "description": "Construct SDK — TypeScript types and declarations for building spaces in the Construct IDE",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./schemas": {
+      "import": "./dist/schemas/index.js",
+      "types": "./dist/schemas/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "construct",
+    "sdk",
+    "spaces",
+    "ide",
+    "vue",
+    "typescript",
+    "tauri",
+    "design",
+    "development-environment",
+    "plugin-system"
+  ],
+  "homepage": "https://github.com/construct-space/sdk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/construct-space/sdk.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Construct Team"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "bun run build",
+    "release": "bun run build && npm publish"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "vue": "^3.5.28",
+    "pinia": "^3.0.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  }
+}

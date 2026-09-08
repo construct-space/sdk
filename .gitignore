@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.npmrc
+*.local
+.DS_Store
+bun.lock
